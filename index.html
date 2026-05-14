@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICoreHub | Premium Script</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
+    <title>ICoreHub | Premium Roblox Script</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* === ЦВЕТОВАЯ ПАЛИТРА И БАЗА === */
         :root {
-            --bg-base: #0a0b10;
-            --bg-surface: #12141d;
-            --bg-surface-hover: #1a1d27;
-            --primary-blue: #2563eb;
-            --cyan-glow: #00f2ff;
-            --text-main: #ffffff;
-            --text-muted: #8b949e;
+            --bg-color: #050505;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --accent-blue: #0066ff;
+            --accent-glow: #00a2ff;
+            --card-bg: rgba(20, 25, 35, 0.5);
+            --card-border: rgba(255, 255, 255, 0.05);
         }
 
         * {
@@ -24,100 +23,146 @@
             font-family: 'Inter', sans-serif;
         }
 
+        html {
+            scroll-behavior: smooth; /* Плавный скролл к якорям */
+        }
+
         body {
-            background-color: var(--bg-base);
+            background-color: var(--bg-color);
             color: var(--text-main);
             overflow-x: hidden;
             line-height: 1.6;
         }
 
-        /* === АНИМАЦИИ === */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* === ФОНОВЫЕ ЧАСТИЦЫ === */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+            pointer-events: none;
         }
 
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.5); }
-            100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+        /* === КАСТОМНЫЙ СКРОЛЛБАР === */
+        ::-webkit-scrollbar {
+            width: 8px;  
+            height: 8px; 
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3); 
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 102, 255, 0.4); 
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 162, 255, 0.8); 
         }
 
-        .animate-fade {
-            animation: fadeInUp 1s ease-out forwards;
-            opacity: 0;
+        /* Фоновые светящиеся сферы */
+        .glow-bg {
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            filter: blur(80px);
         }
 
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
+        .glow-bg-2 {
+            position: fixed;
+            bottom: -20%;
+            right: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(0, 162, 255, 0.1) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            filter: blur(80px);
+        }
 
-        /* === НАВИГАЦИЯ === */
-        nav {
+        /* Навигация */
+        header {
+            padding: 30px 10%;
             display: flex;
             justify-content: space-between;
-            align-height: center;
-            padding: 20px 50px;
-            background: rgba(18, 20, 29, 0.8);
-            backdrop-filter: blur(10px);
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: center;
+            animation: fadeInDown 1s ease;
         }
 
-        .logo {
-            font-weight: 800;
-            font-size: 24px;
-            background: linear-gradient(90deg, var(--text-main), var(--cyan-glow));
+        /* Логотип */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px; 
+        }
+
+        .logo-icon {
+            height: 55px; 
+            width: auto;
+            border-radius: 8px; 
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, var(--accent-glow));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
         }
 
         .nav-links a {
             color: var(--text-muted);
             text-decoration: none;
             margin-left: 30px;
-            font-weight: 600;
-            transition: color 0.3s;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: var(--cyan-glow);
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
-        /* === ГЛАВНЫЙ БЛОК (HERO) === */
+        /* Главная секция (Hero) */
         .hero {
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            min-height: 70vh;
             text-align: center;
-            padding: 100px 20px 50px;
-            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.15) 0%, var(--bg-base) 60%);
+            padding: 0 20px;
+            animation: fadeInUp 1.2s ease;
         }
 
-        .tagline {
-            color: var(--cyan-glow);
+        .badge {
+            background: rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.3);
+            color: var(--accent-glow);
+            padding: 6px 16px;
+            border-radius: 50px;
             font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
         }
 
         .hero h1 {
             font-size: 64px;
-            font-weight: 800;
+            font-weight: 900;
             margin-bottom: 20px;
             line-height: 1.1;
-        }
-
-        .hero h1 span {
-            color: var(--primary-blue);
         }
 
         .hero p {
@@ -127,193 +172,285 @@
             margin-bottom: 40px;
         }
 
-        /* === БЛОК СКРИПТА (СКОПИРОВАТЬ LOADSTRING) === */
+        /* Блок со скриптом (Loadstring) */
         .script-box {
-            background-color: #050505;
-            border: 1px solid rgba(37, 99, 235, 0.3);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px 30px;
             border-radius: 12px;
-            padding: 20px 25px;
-            width: 100%;
-            max-width: 700px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            animation: glowPulse 3s infinite;
-            position: relative;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 800px;
+            width: 100%;
         }
 
-        .code-content {
-            font-family: 'Fira Code', monospace;
-            color: #a5d6ff;
-            font-size: 15px;
+        .script-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 102, 255, 0.2);
+            border-color: rgba(0, 102, 255, 0.3);
+        }
+
+        .code-container {
+            flex-grow: 1;
             text-align: left;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.02);
             overflow-x: auto;
+        }
+
+        code {
+            font-family: monospace;
+            color: #a8c7fa;
+            font-size: 15px;
             white-space: nowrap;
         }
 
-        .code-keyword { color: #ff7b72; }
-        .code-string { color: #a5d6ff; }
-
         .copy-btn {
-            background-color: var(--primary-blue);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-glow));
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 15px 30px;
             border-radius: 8px;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-left: 20px;
-            flex-shrink: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.4);
         }
 
         .copy-btn:hover {
-            background-color: var(--cyan-glow);
-            color: #000;
-            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 162, 255, 0.6);
+            transform: scale(1.05);
         }
 
-        /* === ОСОБЕННОСТИ (ФИЧИ) === */
+        /* Сетка преимуществ */
         .features {
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 50px;
-        }
-
-        .grid {
+            padding: 80px 10%;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
+            animation: fadeIn 1.5s ease;
         }
 
-        .card {
-            background-color: var(--bg-surface);
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             padding: 30px;
             border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s, border-color 0.3s;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
         }
 
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary-blue);
-            background-color: var(--bg-surface-hover);
+        .feature-card:hover {
+            border-color: rgba(0, 162, 255, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .card-icon {
+        .feature-icon {
             font-size: 32px;
             margin-bottom: 20px;
+            color: var(--accent-glow);
         }
 
-        .card h3 {
+        .feature-card h3 {
             font-size: 22px;
-            margin-bottom: 10px;
-            color: var(--text-main);
+            margin-bottom: 15px;
         }
 
-        .card p {
+        .feature-card p {
             color: var(--text-muted);
             font-size: 15px;
         }
 
-        /* === ПОДВАЛ === */
-        footer {
+        /* Футер */
+        .footer {
+            border-top: 1px solid var(--card-border);
             text-align: center;
-            padding: 40px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 20px;
+            margin-top: 40px;
             color: var(--text-muted);
-            margin-top: 50px;
+            font-size: 14px;
         }
 
-        /* Адаптивность для мобилок */
+        /* Адаптив для телефонов */
         @media (max-width: 768px) {
             .hero h1 { font-size: 42px; }
-            .script-box { flex-direction: column; align-items: flex-start; padding: 15px; }
-            .copy-btn { margin-left: 0; margin-top: 15px; width: 100%; }
-            nav { padding: 15px 20px; }
-            .nav-links { display: none; } /* Можно добавить бургер-меню позже */
+            .script-box { flex-direction: column; }
+            .copy-btn { width: 100%; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <nav>
-        <div class="logo">ICoreHub</div>
-        <div class="nav-links">
-            <a href="#features">Features</a>
-            <a href="https://discord.gg/b8ghnfEmyM" target="_blank">Discord</a>
-            <a href="https://t.me/icorehubsab" target="_blank">Telegram</a>
+    <canvas id="particles-canvas"></canvas>
+
+    <div class="glow-bg"></div>
+    <div class="glow-bg-2"></div>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo.png" alt="" class="logo-icon" onerror="this.style.display='none'">
+            <div class="logo-text">ICoreHub</div>
         </div>
-    </nav>
+
+        <nav class="nav-links">
+            <a href="#features">Features</a> <a href="#">Showcase</a>
+            <a href="https://discord.gg/b8ghnfEmyM" target="_blank">Discord</a> </nav>
+    </header>
 
     <section class="hero">
-        <div class="tagline animate-fade">Adaptive Smart Edition</div>
-        <h1 class="animate-fade delay-1">Dominate With <span>ICoreHub</span></h1>
-        <p class="animate-fade delay-2">
-            The ultimate adaptive script for Roblox. Experience true instant grabs, absolute invisibility, and smart executor detection. Optimized for Solara, Delta, and Premium PC Executors.
-        </p>
-
-        <div class="script-box animate-fade delay-3">
-            <div class="code-content" id="scriptCode">
-                <span class="code-keyword">loadstring</span>(<span class="code-keyword">game</span>:HttpGet(<span class="code-string">"https://raw.githubusercontent.com/ТВОЙ_ГИТХАБ/ТВОЙ_СКРИПТ.lua"</span>))()
+        <div class="badge">VERSION 2.21 LIVE</div>
+        <h1>Dominate your game with <br><span style="color: var(--accent-glow);">ICoreHub</span></h1>
+        <p>Advanced bypassing, smart desync features, and clean execution. Built for Delta, Opiumware, and more Windows executors. Completely undetected.</p>
+        
+        <div class="script-box">
+            <div class="code-container">
+                <code id="script-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/inncore/ICoreHub-Script/refs/heads/main/main.lua"))()</code>
             </div>
-            <button class="copy-btn" onclick="copyScript()">Copy Script</button>
+            <button class="copy-btn" id="copyBtn" onclick="copyScript()">Copy Script</button>
         </div>
     </section>
 
     <section id="features" class="features">
-        <h2 class="section-title">Why Choose ICoreHub?</h2>
-        <div class="grid">
-            
-            <div class="card">
-                <div class="card-icon">⚡</div>
-                <h3>Smart Bypass</h3>
-                <p>Dynamically adapts to your executor. Blocks anticheat reports on Delta/Wave, and uses safe methods on Solara/Xeno to prevent kicks.</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">👻</div>
-                <h3>Magic Invis Steal</h3>
-                <p>Flawless desync sequence. Hide underground and snatch items while appearing perfectly still to everyone else on the server.</p>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">🎯</div>
-                <h3>Instant Auto Grab</h3>
-                <p>Utilizes getconnections for 0-delay item stealing. Puts you lightyears ahead of normal proximity prompt users.</p>
-            </div>
-
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Smart Bypass</h3>
+            <p>Built-in hookmetamethod protection blocks local anticheats from sending reports to the server.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Instant Grab</h3>
+            <p>Utilizes getconnections for completely zero-delay proximity prompt interaction.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">👻</div>
+            <h3>Steal Invis</h3>
+            <p>100% flawless physical desync. Hide your character from the server while remaining fully operational.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🥷</div>
+            <h3>Brainrot Hide</h3>
+            <p>A specialized automated sequence that completely desyncs your character, keeping you hidden while you extract high-value targets.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">👁️</div>
+            <h3>ESP System</h3>
+            <p>Advanced X-Ray and ESP overlays. Instantly locate the highest value targets, monitor base timers, and track players.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">⚓</div>
+            <h3>Anti Ragdoll</h3>
+            <p>Stay on your feet. Our adaptive physics stabilizer prevents local stuns, flinging, and ragdolling, ensuring uninterrupted movement.</p>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 ICoreHub. All rights reserved. Created by 1nncore.</p>
+    <footer class="footer">
+        <p>&copy; 2026 ICoreHub. All rights reserved. Designed for top-tier execution.</p>
     </footer>
 
     <script>
+        // === ЛОГИКА КОПИРОВАНИЯ СКРИПТА ===
         function copyScript() {
-            // ТУТ ВСТАВЬ СВОЙ РЕАЛЬНЫЙ LOADSTRING БЕЗ HTML ТЕГОВ
-            const scriptText = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ТВОЙ_ГИТХАБ/ТВОЙ_СКРИПТ.lua"))()';
-            
+            const scriptText = document.getElementById("script-code").innerText;
+            const btn = document.getElementById("copyBtn");
+
             navigator.clipboard.writeText(scriptText).then(() => {
-                const btn = document.querySelector('.copy-btn');
-                btn.innerText = 'Copied!';
-                btn.style.backgroundColor = '#00f2ff';
-                btn.style.color = '#000';
+                const originalText = btn.innerText;
+                btn.innerText = "Copied!";
+                btn.style.background = "linear-gradient(135deg, #00b09b, #96c93d)";
+                btn.style.boxShadow = "0 0 15px rgba(0, 255, 100, 0.4)";
                 
                 setTimeout(() => {
-                    btn.innerText = 'Copy Script';
-                    btn.style.backgroundColor = '#2563eb';
-                    btn.style.color = 'white';
+                    btn.innerText = originalText;
+                    btn.style.background = "linear-gradient(135deg, var(--accent-blue), var(--accent-glow))";
+                    btn.style.boxShadow = "0 0 15px rgba(0, 102, 255, 0.4)";
                 }, 2000);
+            }).catch(err => {
+                console.error("Failed to copy text: ", err);
+                btn.innerText = "Error!";
             });
         }
+
+        // === СИСТЕМА ФОНОВЫХ ЧАСТИЦ (СНЕГ/ДОЖДЬ) ===
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height, particles;
+        
+        const colors = [
+            'rgba(0, 162, 255, ',   
+            'rgba(0, 102, 255, ',   
+            'rgba(200, 230, 255, '  
+        ];
+
+        function initParticles() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            
+            const particleCount = Math.floor(width / 15);
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 0.5; 
+                this.speedX = Math.random() * 0.4 - 0.2; 
+                this.speedY = Math.random() * 1.5 + 0.5; 
+                
+                const colorBase = colors[Math.floor(Math.random() * colors.length)];
+                const opacity = Math.random() * 0.5 + 0.1; 
+                this.color = colorBase + opacity + ')';
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.y > height) {
+                    this.y = 0 - this.size;
+                    this.x = Math.random() * width;
+                }
+                if (this.x > width) this.x = 0;
+                if (this.x < 0) this.x = width;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let p of particles) {
+                p.update();
+                p.draw();
+            }
+            
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', initParticles);
+        initParticles();
+        animateParticles();
     </script>
 </body>
 </html>
