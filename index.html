@@ -1,42 +1,319 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>ICoreHub Premium Key</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICoreHub | Premium Script</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@500&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #141419; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin-top: 15%; }
-        .box { background-color: #1e1e23; padding: 40px; border-radius: 15px; display: inline-block; border: 2px solid #3296ff; box-shadow: 0 0 20px rgba(50, 150, 255, 0.2); }
-        .title { color: #3296ff; font-size: 28px; font-weight: 900; margin-bottom: 10px; margin-top: 0;}
-        .key-text { background-color: #141419; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-family: monospace; font-weight: bold; color: #50ff64; border: 1px dashed #50ff64; margin: 20px 0; }
-        .sub { color: #888; font-size: 14px; margin-top: 20px; }
+        /* === ЦВЕТОВАЯ ПАЛИТРА И БАЗА === */
+        :root {
+            --bg-base: #0a0b10;
+            --bg-surface: #12141d;
+            --bg-surface-hover: #1a1d27;
+            --primary-blue: #2563eb;
+            --cyan-glow: #00f2ff;
+            --text-main: #ffffff;
+            --text-muted: #8b949e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* === АНИМАЦИИ === */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.5); }
+            100% { box-shadow: 0 0 15px rgba(37, 99, 235, 0.3); }
+        }
+
+        .animate-fade {
+            animation: fadeInUp 1s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* === НАВИГАЦИЯ === */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-height: center;
+            padding: 20px 50px;
+            background: rgba(18, 20, 29, 0.8);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            background: linear-gradient(90deg, var(--text-main), var(--cyan-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--cyan-glow);
+        }
+
+        /* === ГЛАВНЫЙ БЛОК (HERO) === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 100px 20px 50px;
+            background: radial-gradient(circle at center, rgba(37, 99, 235, 0.15) 0%, var(--bg-base) 60%);
+        }
+
+        .tagline {
+            color: var(--cyan-glow);
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            color: var(--primary-blue);
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin-bottom: 40px;
+        }
+
+        /* === БЛОК СКРИПТА (СКОПИРОВАТЬ LOADSTRING) === */
+        .script-box {
+            background-color: #050505;
+            border: 1px solid rgba(37, 99, 235, 0.3);
+            border-radius: 12px;
+            padding: 20px 25px;
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: glowPulse 3s infinite;
+            position: relative;
+        }
+
+        .code-content {
+            font-family: 'Fira Code', monospace;
+            color: #a5d6ff;
+            font-size: 15px;
+            text-align: left;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .code-keyword { color: #ff7b72; }
+        .code-string { color: #a5d6ff; }
+
+        .copy-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-left: 20px;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--cyan-glow);
+            color: #000;
+            transform: translateY(-2px);
+        }
+
+        /* === ОСОБЕННОСТИ (ФИЧИ) === */
+        .features {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 50px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background-color: var(--bg-surface);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-blue);
+            background-color: var(--bg-surface-hover);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* === ПОДВАЛ === */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            margin-top: 50px;
+        }
+
+        /* Адаптивность для мобилок */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 42px; }
+            .script-box { flex-direction: column; align-items: flex-start; padding: 15px; }
+            .copy-btn { margin-left: 0; margin-top: 15px; width: 100%; }
+            nav { padding: 15px 20px; }
+            .nav-links { display: none; } /* Можно добавить бургер-меню позже */
+        }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2 class="title">ICoreHub</h2>
-        <p>Thanks for supporting 1nncore! Here is your daily key:</p>
-        <div class="key-text" id="keyDisplay">Loading...</div>
-        <p class="sub">This key changes automatically every 24 hours.</p>
-    </div>
+
+    <nav>
+        <div class="logo">ICoreHub</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="https://discord.gg/b8ghnfEmyM" target="_blank">Discord</a>
+            <a href="https://t.me/icorehubsab" target="_blank">Telegram</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="tagline animate-fade">Adaptive Smart Edition</div>
+        <h1 class="animate-fade delay-1">Dominate With <span>ICoreHub</span></h1>
+        <p class="animate-fade delay-2">
+            The ultimate adaptive script for Roblox. Experience true instant grabs, absolute invisibility, and smart executor detection. Optimized for Solara, Delta, and Premium PC Executors.
+        </p>
+
+        <div class="script-box animate-fade delay-3">
+            <div class="code-content" id="scriptCode">
+                <span class="code-keyword">loadstring</span>(<span class="code-keyword">game</span>:HttpGet(<span class="code-string">"https://raw.githubusercontent.com/ТВОЙ_ГИТХАБ/ТВОЙ_СКРИПТ.lua"</span>))()
+            </div>
+            <button class="copy-btn" onclick="copyScript()">Copy Script</button>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <h2 class="section-title">Why Choose ICoreHub?</h2>
+        <div class="grid">
+            
+            <div class="card">
+                <div class="card-icon">⚡</div>
+                <h3>Smart Bypass</h3>
+                <p>Dynamically adapts to your executor. Blocks anticheat reports on Delta/Wave, and uses safe methods on Solara/Xeno to prevent kicks.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">👻</div>
+                <h3>Magic Invis Steal</h3>
+                <p>Flawless desync sequence. Hide underground and snatch items while appearing perfectly still to everyone else on the server.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h3>Instant Auto Grab</h3>
+                <p>Utilizes getconnections for 0-delay item stealing. Puts you lightyears ahead of normal proximity prompt users.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 ICoreHub. All rights reserved. Created by 1nncore.</p>
+    </footer>
 
     <script>
-        function getDailyKey() {
-            const d = new Date();
-            // Получаем UTC дату: YYYY-MM-DD
-            const dateStr = d.getUTCFullYear() + "-" + 
-                            String(d.getUTCMonth() + 1).padStart(2, '0') + "-" + 
-                            String(d.getUTCDate()).padStart(2, '0');
+        function copyScript() {
+            // ТУТ ВСТАВЬ СВОЙ РЕАЛЬНЫЙ LOADSTRING БЕЗ HTML ТЕГОВ
+            const scriptText = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/ТВОЙ_ГИТХАБ/ТВОЙ_СКРИПТ.lua"))()';
             
-            // Наш секретный алгоритм
-            const secret = "SuperICoreSecret_2026";
-            const combined = dateStr + secret;
-            
-            let hash = 0;
-            for (let i = 0; i < combined.length; i++) {
-                hash = ((hash * 31) + combined.charCodeAt(i)) % 9999999;
-            }
-            return "ICORE-" + hash;
+            navigator.clipboard.writeText(scriptText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.innerText = 'Copied!';
+                btn.style.backgroundColor = '#00f2ff';
+                btn.style.color = '#000';
+                
+                setTimeout(() => {
+                    btn.innerText = 'Copy Script';
+                    btn.style.backgroundColor = '#2563eb';
+                    btn.style.color = 'white';
+                }, 2000);
+            });
         }
-        document.getElementById("keyDisplay").innerText = getDailyKey();
     </script>
 </body>
 </html>
