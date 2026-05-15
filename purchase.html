@@ -54,7 +54,6 @@
         .price { font-size: 54px; font-weight: 900; margin-bottom: 20px; color: #fff; display: flex; justify-content: center; align-items: flex-start; }
         .price span { font-size: 16px; color: var(--text-muted); margin-top: 15px; margin-left: 5px; }
 
-        /* Элементы, которые будут плавно исчезать */
         #premiumFeatures, #showMethodsBtn { transition: opacity 0.3s ease; }
 
         .features-list { list-style: none; margin-bottom: 30px; text-align: left; display: flex; flex-direction: column; flex-grow: 1; }
@@ -99,19 +98,70 @@
             color: white;
             transition: all 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .pay-card:hover { transform: translateY(-5px); }
+        .pay-card:not(.locked-card):hover { transform: translateY(-5px); }
         
-        /* Цвета при наведении */
-        .pay-card.crypto:hover { border-color: #00ff88; box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2); background: rgba(0, 255, 136, 0.05); }
         .pay-card.robux:hover { border-color: #ffaa00; box-shadow: 0 10px 25px rgba(255, 170, 0, 0.2); background: rgba(255, 170, 0, 0.05); }
         .pay-card.rub:hover { border-color: #0077ff; box-shadow: 0 10px 25px rgba(0, 119, 255, 0.2); background: rgba(0, 119, 255, 0.05); }
         .pay-card.uah:hover { border-color: #bb00ff; box-shadow: 0 10px 25px rgba(187, 0, 255, 0.2); background: rgba(187, 0, 255, 0.05); }
 
+        /* СТИЛЬ ЗАБЛОКИРОВАННОЙ КАРТОЧКИ (КРИПТА) */
+        .locked-card { cursor: pointer; }
+        
+        .locked-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .locked-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 50, 50, 0.4);
+            box-shadow: 0 5px 20px rgba(255, 50, 50, 0.15);
+        }
+
+        .locked-card:hover .locked-overlay {
+            background: rgba(255, 50, 50, 0.15);
+        }
+
         .pay-icon { font-size: 32px; margin-bottom: 8px; }
         .pay-price { font-size: 18px; font-weight: 900; margin-bottom: 4px; }
         .pay-name { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; text-align: center; }
+
+        /* Всплывающее уведомление (Toast) */
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 20, 25, 0.95);
+            border: 1px solid rgba(255, 50, 50, 0.4);
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show { bottom: 40px; }
 
         .footer { text-align: center; padding: 30px 20px; color: rgba(255,255,255,0.3); font-size: 14px; }
         
@@ -123,6 +173,11 @@
     </style>
 </head>
 <body>
+
+    <div id="toast" class="toast">
+        <span style="font-size: 20px;">🚫</span> 
+        <span id="toast-text">Crypto payments are currently unavailable.</span>
+    </div>
 
     <canvas id="particles-canvas"></canvas>
     <div class="glow-bg"></div>
@@ -167,21 +222,29 @@
                 
                 <div class="methods-title" id="methodsTitle">Choose Payment Method</div>
                 <div class="payment-methods" id="paymentMethods">
-                    <a href="https://discord.gg/b8ghnfEmyM" target="_blank" class="pay-card crypto">
+                    
+                    <div class="pay-card locked-card" onclick="showToast('Crypto payments are currently unavailable. Check back later!')">
                         <div class="pay-icon">💎</div>
                         <div class="pay-price">$1.00</div>
                         <div class="pay-name">Crypto</div>
-                    </a>
-                    <a href="https://discord.gg/b8ghnfEmyM" target="_blank" class="pay-card robux">
+                        <div class="locked-overlay">
+                            <span style="font-size: 26px; margin-bottom: 5px;">🔒</span>
+                            <span style="font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">Unavailable</span>
+                        </div>
+                    </div>
+
+                    <a href="https://www.roblox.com/game-pass/1841557936/ICoreHub-Premium" target="_blank" class="pay-card robux">
                         <div class="pay-icon">🟩</div>
                         <div class="pay-price">79 R$</div>
                         <div class="pay-name">Gamepass</div>
                     </a>
+                    
                     <a href="https://funpay.com/lots/offer?id=69162673" target="_blank" class="pay-card rub">
                         <div class="pay-icon">💰</div>
                         <div class="pay-price">49 ₽</div>
                         <div class="pay-name">FunPay</div>
                     </a>
+                    
                     <a href="https://donatello.to/1nncore" target="_blank" class="pay-card uah">
                         <div class="pay-icon">💳</div>
                         <div class="pay-price">29 ₴</div>
@@ -197,18 +260,16 @@
     </footer>
 
     <script>
-        // Плавное переключение методов оплаты
+        // Логика переключения методов
         function toggleMethods() {
             const btn = document.getElementById('showMethodsBtn');
             const features = document.getElementById('premiumFeatures');
             const methodsTitle = document.getElementById('methodsTitle');
             const methods = document.getElementById('paymentMethods');
 
-            // Плавно прячем список и кнопку
             features.style.opacity = '0';
             btn.style.opacity = '0';
             
-            // Ждем 300мс пока они исчезнут, потом убираем их из разметки и показываем сетку
             setTimeout(() => {
                 features.style.display = 'none';
                 btn.style.display = 'none';
@@ -216,6 +277,22 @@
                 methodsTitle.classList.add('active');
                 methods.classList.add('active');
             }, 300);
+        }
+
+        // Логика всплывающего уведомления
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = message;
+            
+            // Если уже показывается - сбрасываем таймер
+            clearTimeout(toastTimeout);
+            
+            toast.classList.add('show');
+            
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500); // Показываем 3.5 секунды
         }
 
         // Анимация частиц
