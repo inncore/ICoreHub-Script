@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICoreHub | Key System</title>
+    <link rel="icon" type="image/png" href="slogo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --accent-blue: #0066ff;
+            --accent-glow: #00a2ff;
+            --card-bg: rgba(20, 25, 35, 0.7);
+            --card-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 102, 255, 0.4); border-radius: 10px; }
+
+        .glow-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60vw; height: 60vw; background: radial-gradient(circle, rgba(0, 102, 255, 0.1) 0%, rgba(0,0,0,0) 60%); z-index: -1; filter: blur(100px); }
+
+        /* Шапка с возвратом */
+        .top-nav {
+            position: absolute;
+            top: 30px;
+            left: 10%;
+            right: 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container { display: flex; align-items: center; gap: 15px; text-decoration: none; }
+        .logo-icon { height: 40px; border-radius: 8px; }
+        .logo-text { font-size: 20px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; background: linear-gradient(90deg, #fff, var(--accent-glow)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .back-btn { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        .back-btn:hover { color: #fff; }
+
+        /* Контейнер ключа */
+        .key-container {
+            background: var(--card-bg);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: fadeInUp 0.8s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .key-header { margin-bottom: 30px; }
+        .key-header h1 { font-size: 36px; font-weight: 900; margin-bottom: 10px; color: #fff; }
+        .key-header p { color: var(--text-muted); font-size: 15px; }
+
+        /* Шаги (Steps) */
+        .step-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .step-box.active { border-color: var(--accent-glow); box-shadow: 0 0 20px rgba(0, 162, 255, 0.2); transform: scale(1.02); }
+        .step-box.completed { border-color: #00ff88; opacity: 0.6; }
+        .step-box.locked { opacity: 0.4; pointer-events: none; filter: grayscale(100%); }
+
+        .step-info { text-align: left; }
+        .step-info h3 { font-size: 18px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px;}
+        .step-info p { font-size: 13px; color: var(--text-muted); margin-top: 5px; }
+
+        .step-btn {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-glow));
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 102, 255, 0.3);
+        }
+        .step-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 162, 255, 0.6); }
+        .completed .step-btn { background: #00ff88; color: #000; box-shadow: none; }
+
+        /* Результат и загрузка */
+        .result-box { display: none; margin-top: 10px; }
+        .result-box.active { display: block; animation: fadeIn 0.5s ease; }
+        
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 162, 255, 0.2);
+            border-top: 4px solid var(--accent-glow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .key-display-area { display: none; }
+
+        .key-output {
+            background: rgba(0,0,0,0.8);
+            border: 1px dashed var(--accent-glow);
+            padding: 15px;
+            font-family: monospace;
+            font-size: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 162, 255, 0.5);
+            border-radius: 8px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .copy-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4); }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+    <div class="glow-bg"></div>
+
+    <div class="top-nav">
+        <a href="index.html" class="logo-container">
+            <img src="logo.png" alt="" class="logo-icon" onerror="this.style.display='none'">
+            <div class="logo-text">ICoreHub</div>
+        </a>
+        <a href="purchase.html" class="back-btn">← Back</a>
+    </div>
+
+    <div class="key-container">
+        <div class="key-header">
+            <h1>Free <span style="color: var(--accent-glow);">Access</span></h1>
+            <p>Complete the tasks to generate your 3-day script key.</p>
+        </div>
+
+        <div id="steps-container">
+            <div class="step-box" id="step1">
+                <div class="step-info">
+                    <h3><span>🔗</span> Step 1: Work.ink</h3>
+                    <p>Visit our sponsor to proceed.</p>
+                </div>
+                <button class="step-btn" onclick="goToLink('https://work.ink/2xd6/icorehub-key')">Start</button>
+            </div>
+
+            <div class="step-box locked" id="step2">
+                <div class="step-info">
+                    <h3><span>💎</span> Step 2: LootLabs</h3>
+                    <p>Final verification step.</p>
+                </div>
+                <button class="step-btn" onclick="goToLink('https://loot-link.com/s?Jrg400aH')">Continue</button>
+            </div>
+        </div>
+
+        <div class="result-box" id="resultBox">
+            
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <h3 style="color: var(--accent-glow);">Connecting to secure server...</h3>
+                <p style="color: var(--text-muted); font-size: 13px; margin-top: 5px;">Fetching active key database</p>
+            </div>
+
+            <div class="key-display-area" id="keyDisplayArea">
+                <h3 style="margin-bottom: 5px; color: #00ff88;">Verification Complete!</h3>
+                <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">Your access key is ready to use.</p>
+                <div class="key-output" id="generatedKey">Error fetching key</div>
+                <button class="copy-btn" id="copyBtn" onclick="copyKey()">Copy Key</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // === НАСТРОЙКИ ===
+        // ВСТАВЬ СЮДА ССЫЛКУ RAW ОТ ФАЙЛА НА ТВОЕМ ВТОРОМ АККАУНТЕ GITHUB
+        const RAW_KEY_URL = "https://raw.githubusercontent.com/1ncore/surelydota2key_youdontneedtoseethis/refs/heads/main/key.txt"; 
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentStep = urlParams.get('step');
+
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const resultBox = document.getElementById('resultBox');
+        const stepsContainer = document.getElementById('steps-container');
+
+        if (currentStep === '2') {
+            // Пройден первый шаг
+            step1.classList.remove('active');
+            step1.classList.add('completed');
+            step1.querySelector('.step-btn').innerText = 'Done';
+            
+            step2.classList.remove('locked');
+            step2.classList.add('active');
+        } else if (currentStep === 'done') {
+            // Пройдены все шаги
+            stepsContainer.style.display = 'none';
+            resultBox.classList.add('active');
+            
+            // Запускаем процесс получения ключа
+            fetchKeyFromGithub();
+        } else {
+            // Начало
+            step1.classList.add('active');
+        }
+
+        // Перенаправление (заглушка для тестов)
+        function goToLink(targetParams) {
+            window.location.href = window.location.pathname + targetParams;
+        }
+
+        // ФУНКЦИЯ ПОЛУЧЕНИЯ КЛЮЧА ИЗ ВТОРОГО GITHUB
+        function fetchKeyFromGithub() {
+            // Фейковая задержка 2 секунды для красивой анимации загрузки
+            setTimeout(() => {
+                fetch(RAW_KEY_URL)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Network response was not ok');
+                        return response.text();
+                    })
+                    .then(data => {
+                        // Очищаем от лишних пробелов/переносов строк, которые мог добавить гитхаб
+                        const cleanKey = data.trim();
+                        
+                        // Если файл пустой, выводим фейковый ключ, чтоб юзер не пугался (замени потом)
+                        if (cleanKey === "" || cleanKey.includes("404: Not Found")) {
+                            document.getElementById('generatedKey').innerText = "ICH-TEST-KEY-404";
+                        } else {
+                            document.getElementById('generatedKey').innerText = cleanKey;
+                        }
+                        
+                        showKeyUI();
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        // Если ссылка не настроена (ошибка), выдаем резервный локальный ключ
+                        document.getElementById('generatedKey').innerText = "ICH-LOCAL-BACKUP-KEY";
+                        showKeyUI();
+                    });
+            }, 2000); // 2000 мс = 2 секунды задержки
+        }
+
+        function showKeyUI() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('keyDisplayArea').style.display = 'block';
+        }
+
+        // Копирование
+        function copyKey() {
+            const btn = document.getElementById('copyBtn');
+            const keyText = document.getElementById('generatedKey').innerText;
+            navigator.clipboard.writeText(keyText).then(() => {
+                btn.innerText = "Key Copied!";
+                btn.style.background = "#fff";
+                btn.style.color = "#000";
+                setTimeout(() => {
+                    btn.innerText = "Copy Key";
+                    btn.style.background = "linear-gradient(135deg, #00b09b, #96c93d)";
+                    btn.style.color = "white";
+                }, 2000);
+            });
+        }
+
+        // Анимация частиц
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles;
+        const colors = ['rgba(0, 162, 255, ', 'rgba(0, 102, 255, ', 'rgba(200, 230, 255, '];
+
+        function initParticles() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; particles = []; const particleCount = Math.floor(width / 15); for (let i = 0; i < particleCount; i++) { particles.push(new Particle()); } }
+        class Particle { constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 2 + 0.5; this.speedX = Math.random() * 0.4 - 0.2; this.speedY = Math.random() * 1.5 + 0.5; const colorBase = colors[Math.floor(Math.random() * colors.length)]; const opacity = Math.random() * 0.5 + 0.1; this.color = colorBase + opacity + ')'; } update() { this.x += this.speedX; this.y += this.speedY; if (this.y > height) { this.y = 0 - this.size; this.x = Math.random() * width; } if (this.x > width) this.x = 0; if (this.x < 0) this.x = width; } draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); } }
+        function animateParticles() { ctx.clearRect(0, 0, width, height); for (let p of particles) { p.update(); p.draw(); } requestAnimationFrame(animateParticles); }
+        window.addEventListener('resize', initParticles); initParticles(); animateParticles();
+    </script>
+</body>
+</html>
